@@ -1,0 +1,11 @@
+apiVersion: vendir.k14s.io/v1alpha1
+directories:
+- contents:
+  - git:
+      commitTitle: Bump version to v0.7.2 for release...
+      sha: 12af139976c15721034ea4fca7d1e576ed330c00
+      tags:
+      - v0.7.1-82-g12af139
+    path: event-router
+  path: bundle/config/upstream
+kind: LockConfig

@@ -1,0 +1,122 @@
+### image settings
+replicaCount: 1
+
+image:
+  repository: us.gcr.io/daisy-284300/veba/router
+  pullPolicy: Always
+  fullImage: "" # repo/image:tag format to easily overwrite default for testing
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  name: "vmware-event-router"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+### event router config
+eventrouter:
+  # general event router config settings
+  config:
+    # name of the router configuration
+    name: config
+    # name of the router configuration file
+    fileName: config.yaml
+    # where to mount the configuration file (with trailing "/")
+    mountPath: /etc/vmware-event-router/
+    # debug,info,warn,error
+    logLevel: info
+    # print logs as JSON
+    json: false
+    
+  # define default event provider and processor
+  eventProvider: vcenter
+  eventProcessor: openfaas
+  
+  # vcenter event provider default settings
+  vcenter:
+    # vcenter server address (may omit /sdk)
+    address: https://10.0.0.1/sdk
+    # username to use for connecting to vcenter
+    username: administrator@vsphere.local
+    # password to use for connecting to vcenter
+    password: ReplaceMe
+    # ignore TLS certificate warnings (e.g. self-signed certificate)
+    insecure: false
+
+  # webhook event provider default settings
+  webhook:
+    port: 8080
+    path: "/webhook"
+    username: "" # empty disables basic_auth
+    password: ""
+  
+  # horizon event provider default settings
+  horizon:
+    address: https://api.myhorizon.corp.local
+    insecure: false
+    domain: "corp"
+    username: "administrator"
+    password: "ReplaceMe"
+    
+  # openfaas event processor default settings
+  openfaas:
+    # gateway address, e.g. deployment_name.namespace:port when deployed in Kubernetes
+    address: http://gateway.openfaas:8080
+    # async function invocation mode
+    async: false
+    # enable basic auth against gateway
+    basicAuth: true
+    # basic auth username
+    username: admin
+    # basic auth password
+    password: ReplaceMe
+
+  # knative event processor default settings  
+  knative:
+    encoding: binary
+    insecureSSL: false
+    destination:
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: default
+        namespace: default
+
+  # metrics server default settings (uses default/internal metrics server)
+  metrics:
+    type: ClusterIP
+    port: 8082

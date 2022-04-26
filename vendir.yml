@@ -1,0 +1,14 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: bundle/config/upstream
+  contents:
+  - path: event-router
+    git:
+      url: https://github.com/vmware-samples/vcenter-event-broker-appliance
+      ref: release-0.7.2
+    newRootPath: vmware-event-router/chart
+    includePaths:
+    - vmware-event-router/chart/**/*
+    excludePaths:
+    - vmware-event-router/chart/releases/**/*
